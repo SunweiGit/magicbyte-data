@@ -10,7 +10,7 @@
 	</parent>
 
 	<groupId>org.magicbyte</groupId>
-	<artifactId>service</artifactId>
+	<artifactId>magicbyte-data</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>magicbyte-data</name>
 	<description>config project for Spring Boot</description>
