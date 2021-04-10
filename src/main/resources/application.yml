@@ -1,3 +1,19 @@
+spring:
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+  elasticsearch:
+    rest:
+      uris:
+        - http://localhost:9200
+      username: 'elastic'
+      password: '6p9tqdDqpJB'
+      connection-timeout: 10
+
+
+server:
+  port: 3302
 management:
   endpoint:
     shutdown:
@@ -6,9 +22,35 @@ management:
     web:
       exposure:
         include: "*"
-
 data:
-  env: NaN
+  env: config-eureka-dev
   user:
-    username: NaN
-    password: NaN
+    username: eureka-client-user
+    password: 1291029104
+
+
+
+
+minio:
+  domain: "http://10.206.0.11:9000"
+  accessKey: "minio"
+  secretKey: "%SQknI%%o5Va82F#akH"
+
+
+baidu:
+  appId: "23731699"
+  apiKey: "lIkI6m4x0pNoUOtmoHG6MzuL"
+  secretKey: "PGFXOpGI2amypkhvPLwzaSytQPEmcrb1"
+  grantType: "client_credentials"
+  timeoutInMillis: 60000
+  getTokenUrl: "https://openapi.baidu.com/oauth/2.0/token"
+
+
+
+swagger:
+  apiInfoTitle: "Magic Byte Api"
+  apiInfoVersion: "v1.0"
+  apiInfoDescription: "Magic Byte Api 文档"
+  apiInfoTermsOfServiceUrl: "/doc.html"
+  apiInfoLicense: ""
+  apiInfoLicenseUrl: ""
