@@ -1,7 +1,7 @@
 package org.magicbyte.service.data.entity;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
-import org.json.JSONObject;
 
 import java.io.Serializable;
 

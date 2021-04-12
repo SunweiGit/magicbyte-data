@@ -11,11 +11,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Data
-@ConfigurationProperties(prefix = "baidu")
-public class BaiduConfig {
-    private String appId;
-    private String apiKey;
+@ConfigurationProperties(prefix = "tencent")
+public class TencentConfig {
+    private String secretId;
     private String secretKey;
-    private String grantType;
-    private String getTokenUrl;
 }

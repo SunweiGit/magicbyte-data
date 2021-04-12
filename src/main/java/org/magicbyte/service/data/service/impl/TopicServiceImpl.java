@@ -55,8 +55,7 @@ public class TopicServiceImpl implements TopicService {
                 .query(new BoolQueryBuilder()
                         .mustNot(QueryBuilders.termQuery("topic.keyword","topic"))
                         .must(new BoolQueryBuilder()
-                                .should(QueryBuilders.multiMatchQuery(search, "name.zh_CN", "name.en", "description"))
-
+                                .should(QueryBuilders.multiMatchQuery(search, "name.zh_CN", "name.en", "description","src"))
                         )));
         log.error("{}", searchRequest.source());
         SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);

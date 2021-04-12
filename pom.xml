@@ -11,7 +11,7 @@
 
 	<groupId>org.magicbyte</groupId>
 	<artifactId>magicbyte-data</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>2021.04.10.02</version>
 	<name>magicbyte-data</name>
 	<description>config project for Spring Boot</description>
 
@@ -69,11 +69,16 @@
 			<artifactId>minio</artifactId>
 			<version>8.1.0</version>
 		</dependency>
-
+		<!--导入JDBC-->
 		<dependency>
-			<groupId>com.baidu.aip</groupId>
-			<artifactId>java-sdk</artifactId>
-			<version>4.15.3</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		<!--MySQL驱动-->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -106,7 +111,14 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
-
+		<!--腾讯相关SDK-->
+		<dependency>
+			<groupId>com.tencentcloudapi</groupId>
+			<artifactId>tencentcloud-sdk-java</artifactId>
+			<!-- go to https://search.maven.org/search?q=tencentcloud-sdk-java and get the latest version. -->
+			<!-- 请到https://search.maven.org/search?q=tencentcloud-sdk-java查询所有版本，最新版本如下 -->
+			<version>3.1.217</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
