@@ -16,6 +16,8 @@ import java.util.Map;
 @Builder
 public final class LionDanceHttpUtils {
 
+   public static OkHttpClient client = new OkHttpClient();
+
     /**
      * Get string.
      *
@@ -166,7 +168,6 @@ public final class LionDanceHttpUtils {
 
 
     private static String newCall(HttpMethod method, String url, Map<String, String> headers, RequestBody requestBody) throws IOException {
-        OkHttpClient client = new OkHttpClient();
         Request.Builder builder = new Request.Builder().url(url);
         if (!headers.isEmpty()) {
             builder.headers(Headers.of(headers));
@@ -193,12 +194,13 @@ public final class LionDanceHttpUtils {
                 break;
         }
         try (Response response = client.newCall(builder.build()).execute()) {
-            if (!response.isSuccessful()) {
-                // ... handle failed request
+            if (response.isSuccessful()) {
+                String responseBody = response.body().string();
+                // ... do something with response
+                return responseBody;
+            } else {
+                throw new RuntimeException("" + response);
             }
-            String responseBody = response.body().string();
-            // ... do something with response
-            return responseBody;
         } catch (IOException e) {
             // ... handle IO exception
             throw e;

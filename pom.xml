@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>org.magicbyte</groupId>
-	<artifactId>magicbyte-data</artifactId>
+	<groupId>cn.liondance</groupId>
+	<artifactId>lion-dance-data</artifactId>
 	<version>2021.04.10.02</version>
-	<name>magicbyte-data</name>
+	<name>lion-dance-data</name>
 	<description>config project for Spring Boot</description>
 
 	<properties>
