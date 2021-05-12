@@ -1,16 +1,28 @@
 package cn.liondance.service.data.utils;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
 /**
+ * The type Lion dance utils.
+ *
  * @author sunwei
  */
+@Slf4j
 public class LionDanceUtils {
 
-    public static File base64ToFile(File file, String base64) {
+    /**
+     * Base 64 to file.
+     *
+     * @param file   the file
+     * @param base64 the base 64
+     */
+    public static void base64ToFile(File file, String base64) {
         BufferedOutputStream bos = null;
         java.io.FileOutputStream fos = null;
         try {
@@ -40,6 +52,19 @@ public class LionDanceUtils {
                 }
             }
         }
-        return file;
+    }
+
+
+    /**
+     * Gets content type.
+     *
+     * @param suffix the suffix
+     * @return the content type
+     */
+    public static String getContentType(String suffix) {
+        JdbcTemplate jdbcTemplate = LionDanceJdbcUtils.getJdbcTemplate();
+        String sql="SELECT content_type FROM http_content_type WHERE suffix='" + suffix + "' LIMIT 1";
+        log.error("sql {}",sql);
+        return jdbcTemplate.queryForObject(sql, String.class);
     }
 }

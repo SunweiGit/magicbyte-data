@@ -19,7 +19,7 @@ public class LionDanceJdbcUtils {
 
     public static JdbcTemplate getJdbcTemplate() {
         HikariConfig configuration = new HikariConfig();
-        configuration.setJdbcUrl("jdbc:mysql://localhost:3306/liondance?characterEncoding=utf8&allowMultiQueries=true&verifyServerCertificate=false&serverTimezone=GMT%2B8");
+        configuration.setJdbcUrl("jdbc:mysql://localhost:3306/liondance?characterEncoding=utf8&allowMultiQueries=true&verifyServerCertificate=false&serverTimezone=GMT%2B8&useSSL=false");
         configuration.setDriverClassName("com.mysql.cj.jdbc.Driver");
         configuration.setUsername("root");
         configuration.setPassword("Admin@1278300799");

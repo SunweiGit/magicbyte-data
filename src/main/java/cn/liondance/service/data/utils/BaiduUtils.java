@@ -90,17 +90,11 @@ public class BaiduUtils {
     /**
      * Speech synthesis string.
      *
-     * @param type the type
-     * @param per  the per
-     * @param spd  the spd
-     * @param pit  the pit
-     * @param vol  the vol
-     * @param aue  the aue
-     * @param tex  the tex
+     * @param tex the tex
      * @return the string
      * @throws IOException the io exception
      */
-    public static String speechSynthesis(String tex) throws IOException {
+    public static String speechSynthesis(String tex) throws IOException, InterruptedException {
         FormBody.Builder formBodyBuilder = new FormBody.Builder();
         formBodyBuilder.add("type", "tns")
                 .add("per", "4103")
@@ -109,18 +103,7 @@ public class BaiduUtils {
                 .add("vol", "15")
                 .add("aue", "6")
                 .add("tex", tex);
-        LionDanceHttpUtils.post(SPEECH_SYNTHESIS_URL, formBodyBuilder.build());
-        return "";
+        return LionDanceHttpUtils.post(SPEECH_SYNTHESIS_URL, formBodyBuilder.build());
     }
 
-
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     * @throws IOException the io exception
-     */
-    public static void main(String[] args) throws IOException {
-        System.out.printf(translate("苹果", "auto", "en", 0, 0, 0));
-    }
 }

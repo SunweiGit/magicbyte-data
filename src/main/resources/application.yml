@@ -37,7 +37,7 @@ data:
 
 
 minio:
-  domain: "http://10.206.0.11:9000"
+  domain: "http://118.195.140.140:9000"
   accessKey: "minio"
   secretKey: "%SQknI%%o5Va82F#akH"
 
