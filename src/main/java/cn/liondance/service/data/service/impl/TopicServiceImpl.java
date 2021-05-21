@@ -32,8 +32,8 @@ public class TopicServiceImpl implements TopicService {
         searchRequest.indices("magic_byte_topic");
         searchRequest.source(new SearchSourceBuilder()
                 .fetchSource("src,sound,id,name,description,topic".split(","), null)
-                .from(page * size)
-                .size((page + 1) * size)
+                .from((page-1) * size)
+                .size(size)
                 .sort("sort", SortOrder.DESC)
                 .query(new BoolQueryBuilder()
                         .must(QueryBuilders.termQuery("topic.keyword","topic"))
@@ -49,8 +49,8 @@ public class TopicServiceImpl implements TopicService {
         searchRequest.indices("magic_byte_topic");
         searchRequest.source(new SearchSourceBuilder()
                 .fetchSource("src,sound,id,name,description,topic".split(","), null)
-                .from(page * size)
-                .size((page + 1) * size)
+                .from((page-1) * size)
+                .size(size)
                 .sort("sort", SortOrder.DESC)
                 .query(new BoolQueryBuilder()
                         .mustNot(QueryBuilders.termQuery("topic.keyword","topic"))
@@ -69,7 +69,7 @@ public class TopicServiceImpl implements TopicService {
         searchRequest.indices("magic_byte_topic");
         searchRequest.source(new SearchSourceBuilder()
                 .fetchSource("src,sound,id,name,description,topic,".split(","), null)
-                .from(page)
+                .from((page-1) * 1)
                 .size(1)
                 .sort("sort", SortOrder.ASC)
                 .query(new BoolQueryBuilder()

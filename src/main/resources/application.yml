@@ -11,9 +11,9 @@ spring:
   elasticsearch:
     rest:
       uris:
-        - http://localhost:9200
+        - http://118.195.140.140:9200
       username: 'elastic'
-      password: '6p9tqdDqpJB'
+      password: 'admin@123456'
       connection-timeout: 10
 
 

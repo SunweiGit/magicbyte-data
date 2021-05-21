@@ -64,7 +64,7 @@ public class BaiduUtils {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String translate(String q, String from, String to, Integer tts, Integer dict, Integer action) throws IOException {
+    public static String translate(String q, String from, String to, Integer tts, Integer dict, Integer action) throws IOException, InterruptedException {
         int salt = (int) (Math.random() * (90000000 - 10000000) + 10000000);
         StringBuilder stringBuilder = new StringBuilder()
                 .append(TRANSLATE_APP_ID)
