@@ -11,7 +11,7 @@
 
 	<groupId>cn.liondance</groupId>
 	<artifactId>lion-dance-data</artifactId>
-	<version>2021.04.10.02</version>
+	<version>2021.05.24.14.43</version>
 	<name>lion-dance-data</name>
 	<description>config project for Spring Boot</description>
 
