@@ -3,6 +3,7 @@ package cn.liondance.service.data.controller;
 import cn.liondance.service.data.common.Result;
 import cn.liondance.service.data.service.TopicService;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -106,7 +107,9 @@ public class HomeController {
         Optional<SearchHit> optional = Arrays.stream(searchHits.getHits()).findFirst();
         if (optional.isPresent()) {
             Map<String, Object> map = Maps.newHashMap();
-            map.put("source", optional.get().getSourceAsMap());
+            Map<String, Object> map1 = optional.get().getSourceAsMap();
+            map1.put("sound", JSONObject.parseObject(map1.get("sound").toString()));
+            map.put("source", map1);
             map.put("totalValue", searchHits.getTotalHits().value);
             return Result.ok().setData(map);
         } else {

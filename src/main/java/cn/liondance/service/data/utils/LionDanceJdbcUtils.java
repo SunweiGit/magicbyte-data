@@ -4,6 +4,7 @@ package cn.liondance.service.data.utils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Builder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -15,7 +16,6 @@ import javax.sql.DataSource;
  */
 @Builder
 public class LionDanceJdbcUtils {
-
 
     public static JdbcTemplate getJdbcTemplate() {
         HikariConfig configuration = new HikariConfig();

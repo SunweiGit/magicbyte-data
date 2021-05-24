@@ -10,8 +10,10 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +29,10 @@ import static cn.liondance.service.data.utils.LionDanceUtils.getContentType;
 
 /**
  * The type Lion dance cloud service.
+ *
+ * @author sunwei
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class LionDanceCloudServiceImpl implements LionDanceCloudService {
@@ -56,10 +61,10 @@ public class LionDanceCloudServiceImpl implements LionDanceCloudService {
                         .stream(new FileInputStream(file), file.length(), -1)
                         .contentType(contentType)
                         .build());
-                if (file.length()>100){
+                if (file.length() > 100) {
                     jdbcTemplate.update("UPDATE `text_audio` \n" +
                             "SET\n" +
-                            "`target` = '" + LionDanceConfig.domain + "/minio" + "/" + bucket + "/" + object + "' \n" +
+                            "`target` = '" + LionDanceConfig.domain + "/files" + "/" + bucket + "/" + object + "' \n" +
                             "WHERE\n" +
                             "\t`id` = '" + o.get("id") + "';");
                 }
@@ -97,28 +102,46 @@ public class LionDanceCloudServiceImpl implements LionDanceCloudService {
     public void updateTranslate(String tableName, String field) {
         JdbcTemplate jdbcTemplate = LionDanceJdbcUtils.getJdbcTemplate();
         jdbcTemplate.queryForList("SELECT\t id," + field + " FROM " + tableName + "").forEach(o -> {
-            JSONObject parseObject = JSONObject.parseObject(o.get(field).toString());
-            jdbcTemplate.queryForList("SELECT target,target_type,source,source_type FROM text_translate WHERE source='" + parseObject.getString("zh_CN") + "'").forEach(o1 -> {
-                parseObject.put(o1.get("target_type").toString(),o1.get("target"));
-                parseObject.put(o1.get("source_type").toString(),o1.get("source"));
-            });
-            jdbcTemplate.execute("UPDATE "+tableName+"\n" +
-                    "SET `"+field+"` = '" + parseObject.toJSONString() + "'\n" +
-                    "WHERE\n" +
-                    "\t`id` = '" + o.get("id").toString() + "'");
+            try {
+                JSONObject parseObject = JSONObject.parseObject(o.get(field).toString());
+                jdbcTemplate.queryForList("SELECT target,target_type,source,source_type FROM text_translate WHERE source='" + parseObject.getString("zh_CN") + "'").forEach(o1 -> {
+                    parseObject.put(o1.get("target_type").toString(), o1.get("target"));
+                    parseObject.put(o1.get("source_type").toString(), o1.get("source"));
+                });
+                jdbcTemplate.execute("UPDATE " + tableName + "\n" +
+                        "SET `" + field + "` = '" + parseObject.toJSONString() + "'\n" +
+                        "WHERE\n" +
+                        "\t`id` = '" + o.get("id").toString() + "'");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
     @Override
     public void updateAudio(String tableName, String field) {
+        final BASE64Encoder encoder = new BASE64Encoder();
         JdbcTemplate jdbcTemplate = LionDanceJdbcUtils.getJdbcTemplate();
         jdbcTemplate.queryForList("SELECT\t id,sound," + field + " FROM " + tableName + "").forEach(o -> {
             JSONObject sound_parseObject = JSONObject.parseObject(o.get("sound").toString());
             JSONObject field_parseObject = JSONObject.parseObject(o.get(field).toString());
-            field_parseObject.values().forEach(o1->{
-                sound_parseObject.put(o1.toString(),jdbcTemplate.queryForObject("SELECT IFNULL(target,'')  FROM text_audio WHERE source='"+o1+"'",String.class));
+            field_parseObject.values().forEach(o1 -> {
+                try {
+                    List<String> url = jdbcTemplate.queryForList("SELECT IFNULL(target,'')  FROM text_audio WHERE source='" + o1 + "' limit 1", String.class);
+                    sound_parseObject.put(o1.toString(), url.get(0));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    try {
+                        jdbcTemplate.update("INSERT INTO `text_audio` ( `id`, `source`, `target` )\n" +
+                                "VALUES\n" +
+                                "\t( '" + encoder.encode(o1.toString().getBytes()) + "', '" + o1 + "',NULL );");
+                    } catch (Exception e1) {
+                        log.error("o [{}]", o);
+                        e1.printStackTrace();
+                    }
+                }
             });
-            jdbcTemplate.execute("UPDATE "+tableName+"\n" +
+            jdbcTemplate.execute("UPDATE " + tableName + "\n" +
                     "SET `sound` = '" + sound_parseObject.toJSONString() + "'\n" +
                     "WHERE\n" +
                     "\t`id` = '" + o.get("id").toString() + "'");
