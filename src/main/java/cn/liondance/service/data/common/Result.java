@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 /**
  * @Author sunwei
+ *
  * @date ：Created in 2020/1/20 -14:58
  * @description：Successful result
  * @modified By：
@@ -20,34 +21,38 @@ import java.io.Serializable;
 @ApiModel(value = "返回结果类", description = "返回结果类")
 public class Result<T> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @ApiModelProperty(example = "结果返回时间戳")
-    private Long timestamp;
-    @ApiModelProperty(example = "结果返回状态码")
-    private int status;
-    @ApiModelProperty(example = "结果返回消息")
-    private String message;
-    @ApiModelProperty(example = "结果返回内容")
-    private T data;
+  private static final long serialVersionUID = 1L;
 
-    public static Result ok() {
-        return Result.builder()
-                .status(HttpStatus.OK.value())
-                .message(HttpStatus.OK.name())
-                .timestamp(System.currentTimeMillis())
-                .build();
-    }
+  @ApiModelProperty(example = "结果返回时间戳")
+  private Long timestamp;
 
-    public static Result error() {
-        return Result.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                .timestamp(System.currentTimeMillis())
-                .build();
-    }
+  @ApiModelProperty(example = "结果返回状态码")
+  private int status;
 
-    public Result setData(T data) {
-        this.data = data;
-        return this;
-    }
+  @ApiModelProperty(example = "结果返回消息")
+  private String message;
+
+  @ApiModelProperty(example = "结果返回内容")
+  private T data;
+
+  public static Result ok() {
+    return Result.builder()
+        .status(HttpStatus.OK.value())
+        .message(HttpStatus.OK.name())
+        .timestamp(System.currentTimeMillis())
+        .build();
+  }
+
+  public static Result error() {
+    return Result.builder()
+        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+        .message(HttpStatus.INTERNAL_SERVER_ERROR.name())
+        .timestamp(System.currentTimeMillis())
+        .build();
+  }
+
+  public Result setData(T data) {
+    this.data = data;
+    return this;
+  }
 }

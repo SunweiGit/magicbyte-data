@@ -15,19 +15,18 @@ import org.springframework.stereotype.Component;
 @Data
 @ConfigurationProperties(prefix = "minio")
 public class MinioConfig {
-    private String domain;
-    private String accessKey;
-    private String secretKey;
+  private String domain;
+  private String accessKey;
+  private String secretKey;
 
-    @Bean
-    public MinioClient createMinioClient() {
+  /**
+   * Create minio client minio client.
+   *
+   * @return the minio client
+   */
+  @Bean
+  public MinioClient createMinioClient() {
 
-        return MinioClient
-                .builder()
-                .endpoint(domain)
-                .credentials(accessKey, secretKey)
-                .build();
-
-    }
-
+    return MinioClient.builder().endpoint(domain).credentials(accessKey, secretKey).build();
+  }
 }

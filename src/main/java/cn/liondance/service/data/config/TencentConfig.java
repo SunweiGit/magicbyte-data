@@ -13,6 +13,6 @@ import org.springframework.stereotype.Component;
 @Data
 @ConfigurationProperties(prefix = "tencent")
 public class TencentConfig {
-    private String secretId;
-    private String secretKey;
+  private String secretId;
+  private String secretKey;
 }

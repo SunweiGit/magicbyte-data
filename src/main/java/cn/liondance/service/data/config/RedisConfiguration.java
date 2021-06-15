@@ -36,126 +36,124 @@ import java.util.Set;
  * @author sunwei
  *//*
 
-@AllArgsConstructor
-*/
+   @AllArgsConstructor
+   */
+/** 开启注解式缓存 *//*
+
+              @EnableCaching
+              @Configuration
+              public class RedisConfiguration extends CachingConfigurerSupport {
+
+                  @Bean
+                  public JedisConnectionFactory jedisConnectionFactory() {
+                      RedisStandaloneConfiguration redisStandaloneConfiguration=new  RedisStandaloneConfiguration();
+                      redisStandaloneConfiguration.setHostName("localhost");
+                      redisStandaloneConfiguration.setPort(6379);
+                      JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(redisStandaloneConfiguration);
+                      return jedisConnectionFactory;
+                  }
+
+                  @Bean
+                  public RedisTemplate redisTemplate() {
+                      RedisTemplate redisTemplate = new RedisTemplate();
+                      redisTemplate.setConnectionFactory(jedisConnectionFactory());
+                      return redisTemplate;
+                  }
+
+                  */
 /**
- *开启注解式缓存
+ * 生成key的策略 根据类名+方法名+所有参数的值生成唯一的一个key
+ *
+ * @return
  *//*
 
-@EnableCaching
-@Configuration
-public class RedisConfiguration extends CachingConfigurerSupport {
+   @Bean
+   @Override
+   public KeyGenerator keyGenerator() {
+       return (target, method, params) -> {
+           StringBuilder sb = new StringBuilder();
+           sb.append(target.getClass().getName());
+           sb.append(method.getName());
+           for (Object obj : params) {
+               sb.append(obj.toString());
+           }
+           return sb.toString();
+       };
+   }
 
-    @Bean
-    public JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration=new  RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName("localhost");
-        redisStandaloneConfiguration.setPort(6379);
-        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(redisStandaloneConfiguration);
-        return jedisConnectionFactory;
-    }
-
-    @Bean
-    public RedisTemplate redisTemplate() {
-        RedisTemplate redisTemplate = new RedisTemplate();
-        redisTemplate.setConnectionFactory(jedisConnectionFactory());
-        return redisTemplate;
-    }
-
-    */
+   */
 /**
-     * 生成key的策略 根据类名+方法名+所有参数的值生成唯一的一个key
-     *
-     * @return
-     *//*
+ * 管理缓存
+ *
+ * @param redisConnectionFactory the redis connection factory
+ * @return cache manager
+ *//*
 
-    @Bean
-    @Override
-    public KeyGenerator keyGenerator() {
-        return (target, method, params) -> {
-            StringBuilder sb = new StringBuilder();
-            sb.append(target.getClass().getName());
-            sb.append(method.getName());
-            for (Object obj : params) {
-                sb.append(obj.toString());
-            }
-            return sb.toString();
-        };
-    }
+   @Bean
+   public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+       //通过Spring提供的RedisCacheConfiguration类，构造一个自己的redis配置类，从该配置类中可以设置一些初始化的缓存命名空间
+       // 及对应的默认过期时间等属性，再利用RedisCacheManager中的builder.build()的方式生成cacheManager：
+       RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();  // 生成一个默认配置，通过config对象即可对缓存进行自定义配置
 
-    */
+       // 设置一个初始化的缓存空间set集合
+       Set<String> cacheNames = new HashSet<>();
+       cacheNames.add("my-redis-cache1-hours");
+       cacheNames.add("my-redis-cache2-hours");
+
+       // 对每个缓存空间应用不同的配置
+       Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
+       configMap.put("my-redis-cache1-hours", config.entryTtl(Duration.ofHours(1)).disableCachingNullValues());
+       configMap.put("my-redis-cache2-hours", config.entryTtl(Duration.ofHours(2)).disableCachingNullValues());
+
+       RedisCacheManager cacheManager = RedisCacheManager.builder(redisConnectionFactory)     // 使用自定义的缓存配置初始化一个cacheManager
+               .initialCacheNames(cacheNames)  // 注意这两句的调用顺序，一定要先调用该方法设置初始化的缓存名，再初始化相关的配置
+               .withInitialCacheConfigurations(configMap)
+               .build();
+       return cacheManager;
+   }
+
+   */
 /**
-     * 管理缓存
-     *
-     * @param redisConnectionFactory the redis connection factory
-     * @return cache manager
-     *//*
+ * Redis template redis template.
+ *
+ * @param connectionFactory the connection factory
+ * @return the redis template
+ *//*
 
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-        //通过Spring提供的RedisCacheConfiguration类，构造一个自己的redis配置类，从该配置类中可以设置一些初始化的缓存命名空间
-        // 及对应的默认过期时间等属性，再利用RedisCacheManager中的builder.build()的方式生成cacheManager：
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();  // 生成一个默认配置，通过config对象即可对缓存进行自定义配置
+   @Bean
+   public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+       RedisTemplate<Object, Object> template = new RedisTemplate<>();
+       template.setConnectionFactory(connectionFactory);
 
-        // 设置一个初始化的缓存空间set集合
-        Set<String> cacheNames = new HashSet<>();
-        cacheNames.add("my-redis-cache1-hours");
-        cacheNames.add("my-redis-cache2-hours");
+       //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
+       Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(Object.class);
 
-        // 对每个缓存空间应用不同的配置
-        Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
-        configMap.put("my-redis-cache1-hours", config.entryTtl(Duration.ofHours(1)).disableCachingNullValues());
-        configMap.put("my-redis-cache2-hours", config.entryTtl(Duration.ofHours(2)).disableCachingNullValues());
+       ObjectMapper mapper = new ObjectMapper();
+       mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+      // mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+       serializer.setObjectMapper(mapper);
 
-        RedisCacheManager cacheManager = RedisCacheManager.builder(redisConnectionFactory)     // 使用自定义的缓存配置初始化一个cacheManager
-                .initialCacheNames(cacheNames)  // 注意这两句的调用顺序，一定要先调用该方法设置初始化的缓存名，再初始化相关的配置
-                .withInitialCacheConfigurations(configMap)
-                .build();
-        return cacheManager;
-    }
+       template.setValueSerializer(serializer);
+       //使用StringRedisSerializer来序列化和反序列化redis的key值
+       template.setKeySerializer(new StringRedisSerializer());
+       template.afterPropertiesSet();
+       return template;
+   }
 
-    */
+   */
 /**
-     * Redis template redis template.
-     *
-     * @param connectionFactory the connection factory
-     * @return the redis template
-     *//*
+ * String redis template string redis template.
+ *
+ * @param factory the factory
+ * @return the string redis template
+ *//*
 
-    @Bean
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<Object, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
+       @Bean
+       public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
+           StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
+           stringRedisTemplate.setConnectionFactory(factory);
+           return stringRedisTemplate;
+       }
 
-        //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
-        Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(Object.class);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-       // mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-        serializer.setObjectMapper(mapper);
-
-        template.setValueSerializer(serializer);
-        //使用StringRedisSerializer来序列化和反序列化redis的key值
-        template.setKeySerializer(new StringRedisSerializer());
-        template.afterPropertiesSet();
-        return template;
-    }
-
-    */
-/**
-     * String redis template string redis template.
-     *
-     * @param factory the factory
-     * @return the string redis template
-     *//*
-
-    @Bean
-    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
-        StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
-        stringRedisTemplate.setConnectionFactory(factory);
-        return stringRedisTemplate;
-    }
-
-}
-*/
+   }
+   */

@@ -22,36 +22,36 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @ConfigurationProperties(prefix = "swagger")
 public class SwaggerConfig {
-    private String apiInfoTitle;
-    private String apiInfoVersion;
-    private String apiInfoDescription;
-    private String apiInfoTermsOfServiceUrl;
-    private String apiInfoLicense;
-    private String apiInfoLicenseUrl;
+  private String apiInfoTitle;
+  private String apiInfoVersion;
+  private String apiInfoDescription;
+  private String apiInfoTermsOfServiceUrl;
+  private String apiInfoLicense;
+  private String apiInfoLicenseUrl;
 
-    /**
-     * Create rest api docket.
-     *
-     * @return the docket
-     */
-    @Bean
-    public Docket createRestApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build();
-    }
+  /**
+   * Create rest api docket.
+   *
+   * @return the docket
+   */
+  @Bean
+  public Docket createRestApi() {
+    return new Docket(DocumentationType.SWAGGER_2)
+        .apiInfo(apiInfo())
+        .select()
+        .apis(RequestHandlerSelectors.any())
+        .paths(PathSelectors.any())
+        .build();
+  }
 
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title(apiInfoTitle)
-                .version(apiInfoVersion)
-                .description(apiInfoDescription)
-                .termsOfServiceUrl(apiInfoTermsOfServiceUrl)
-                .license(apiInfoLicense)
-                .licenseUrl(apiInfoLicenseUrl)
-                .build();
-    }
+  private ApiInfo apiInfo() {
+    return new ApiInfoBuilder()
+        .title(apiInfoTitle)
+        .version(apiInfoVersion)
+        .description(apiInfoDescription)
+        .termsOfServiceUrl(apiInfoTermsOfServiceUrl)
+        .license(apiInfoLicense)
+        .licenseUrl(apiInfoLicenseUrl)
+        .build();
+  }
 }
